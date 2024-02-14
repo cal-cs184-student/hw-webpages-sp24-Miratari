@@ -1,7 +1,194 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 1 index.html here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    width: 90%;
+    padding: 100px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  tr {
+    display:flex;
+    flex-direction:row;
+  }
+  img {
+    width: 400px;
+  }
+  figcaption {
+    width: 400px;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+  .bodytext {
+    text-align:center;
+  }
+  p {
+    padding-left:25%;
+    padding-right:25%;
+  }
+</style>
+<title>CS 184/284A Rasterizer</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184/284A: Computer Graphics and Imaging, Spring 2024</h1>
+<h1 align="middle">Homework 1: Rasterizer</h1>
+<h2 align="middle">Koa Lee, Justin Lee</h2>
+
+<br>
+<br>
+
+<div id="bodytext">
+
+<h2 align="middle">Overview</h2>
+<p>TODO: Give a high-level overview of what you implemented in this homework Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.</p>
+
+<h2 align="middle">Section I: Rasterization</h2>
+
+<h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
+
+<p>Our algorithm first sets a bounding box around where the triangle is going to be rendered. Then, for each sample in that box, it checks whether or not that pixel is within the bounds of the triangle definied by the three given points. If that sample is inside the triangle, it renders the pixel with the given color. We haven't implemented any further optimizations to the sampling algorithm.</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task1test4.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of test4.svg. At this point it did not support any kind of anti-aliasing.</figcaption>
+      </td>
+      <td>
+        <img src="images/task1test6.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of test6.svg. Program renders triangles properly, regardless of vertex winding order.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<h3 align="middle">Part 2: Antialiasing triangles</h3>
+<p>Our algorithm divides each pixel by our sample rate, meaning that if our sample rate is 4, we would have 1 pixel be divided into 4 squares. Since we only have a limited amount of pixels on the screen to display, we average the colors of each of the "mini squares" and use this averaged color as our new color for the pixel. We do this by increasing the frame_buffer size by multiplying it by our sample rate. Supersampling has a noticeable effect in smoothing out edges which is very useful in our case. As for our rasterization pipeline, we put our averaging of color function within resolve_to_framebuffer() because of how it is the last step in rendering the frame, allowing for us to calculate our supersampling.  </p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/supersample_one.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of test4.svg. We do not apply supersampling here.</figcaption>
+      </td>
+      <td>
+        <img src="images/supersample_four.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of test4.svg. We have a sampling rate of 4, and we can notice there is a shift in color transparency which is due to how each pixel had 4 supersampling points in order to find their value.</figcaption>
+      </td>
+      <td>
+        <img src="images/supersample_sixteen.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of test4.svg. We have a sampling rate of 16, and can see that the triangles look smoother due to how there is 16 supersampling poitns. There is more pixels being used because they were previously not covered by the lowre amount of supersampling points.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<h3 align="middle">Part 3: Transforms</h3>
+
+<p>The main goal with this test svg was to demonstrate how transformations could be nested and applied to one another. We took the original cubeman svg and applied mostly rotation and translation tranformations to the various different limbs (as well as a scaling to the torso). The resulting image is as follows:</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task3my_robot.png" align="middle" width="400px"/>
+        <figcaption align="middle">Waving? Stretching? Maybe both?</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 4: Barycentric coordinates</h3>
+
+<p>The idea behind barycentric coordinates is, given some parameter upon which to interpolate, and given three vertices with their set parameters, to be able to define the parameters for any given point based on how close that point is to each of the vertices. This is what results in a smooth interpolation along a given triangle.</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task4triangle.png" align="middle" width="400px"/>
+        <figcaption align="middle">Example of a triangle where the three vertices are defined to have colors red, green and blue. For each point in the triangle, the color is interpolated based on proximity to each vertex.</figcaption>
+      </td>
+      <td>
+        <img src="images/task4wheel.png" align="middle" width="400px"/>
+        <figcaption align="middle">Screenshot of test7.svg.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+<p>For each screen pixel, we calculate which texel to display given the transofmrations applied to the texture. This often results in a set of texture samples that doesn't perfectly line up with the grid of screen samples to render, so an algorithm to discern which texel to use is required. With nearest neighbor interpolation, we simply render the texel that's closest to wherever our screen sample is. With bilinear interpolation, we interpolate the color to display based on the sameple pixel's distance to the nearest texels.</p>
+  <div align="middle">
+    <table style="width=100%">
+      <tr>
+        <td>
+          <img src="images/nearest_one.png" align="middle" width="400px"/>
+          <figcaption align="middle">Nearest Method - One sample per pixel.</figcaption>
+        </td>
+        <td>
+          <img src="images/nearest_sixteen.png" align="middle" width="400px"/>
+          <figcaption align="middle">Nearest Method - Sixteen samples per pixel.</figcaption>
+        </td>
+        <td>
+          <img src="images/bilinear_one.png" align="middle" width="400px"/>
+          <figcaption align="middle">Bilinear Method - One sample per pixel.</figcaption>
+        </td>
+        <td>
+          <img src="images/bilinear_sixteen.png" align="middle" width="400px"/>
+          <figcaption align="middle">Bilinear Method - Sixteen samples per pixel.</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <p>We clearly see how we have more color depth when we use the Bilinear Method. There is more variation in colors and results in a smoother color on the top island of these images. This indicates that we see large differences between the two methods when there are clustered and very small details, allowing for the bilinear method to show the variations within that one pixel through smoothing the colors out.</p>
+
+<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+<p>Level sampling allows us to control mipmap levels in order to prevent potential alisaing on textures that may be concentrated in an area (such as rendering an image of an object far away). We implemented this for texture mapping through sampling based on the mipmap level, we calculate the mipmap level needed and then calculate the color with the sampling method and mipmap level. Pixel sampling requires calculations with vectors, but does not have much antialiasing power. It can be slow if you are using it for bilinear sampling as it does have more calculations. Level sampling needs the most memory out of our sampling techniques due to having to store mipmaps, making it also slower, but has very good aliasing power. Changing the number of samples per pixel requires a lot of memory and slows down considerably depending on how much you increase the number of samples, but there is good aliasing power.</p>
+
+<p>image credit: https://en.wikipedia.org/wiki/PNG#/media/File:PNG_transparency_demonstration_1.png</p>
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/L_ZERO_P_NEAREST.png" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest Method & Zeroth Level Level.</figcaption>
+      </td>
+      <td>
+        <img src="images/L_ZERO_P_LINEAR.png" align="middle" width="400px"/>
+        <figcaption align="middle">BiLinear Method & Zeroth Level.</figcaption>
+      </td>
+      <td>
+        <img src="images/L_NEAREST_P_NEAREST.png" align="middle" width="400px"/>
+        <figcaption align="middle">Nearest Method & Nearest Level.</figcaption>
+      </td>
+      <td>
+        <img src="images/L_NEAREST_P_LINEAR.png" align="middle" width="400px"/>
+        <figcaption align="middle">Bilinear Method & Nearest Level.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<p>We see a lot more detail when it comes to the one that uses the mipmap levels, rather than using level 0. We also see that using the Bilinear method does allow the shape to appear smoother.</p>
+<h2 align="middle">Section III: Art Competition</h2>
+<p>If you are not participating in the optional art competition, don't worry about this section!</p>
+
+<h3 align="middle">Part 7: Draw something interesting!</h3>
+
+</body>
 </html>
