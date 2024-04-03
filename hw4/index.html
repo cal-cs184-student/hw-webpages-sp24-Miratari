@@ -1,7 +1,340 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 4 index.html here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <style>
+    body {
+      width: 70%;
+      padding: 100px;
+      margin: auto;
+      text-align: left;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+    }
+    tr {
+      display:flex;
+      flex-direction:row;
+      justify-content:center;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+    h3 {
+      text-align: center;
+      margin:10px;
+    }
+    .bodytext {
+      text-align:center;
+    }
+    p {
+      text-align:left;
+      padding-left:25%;
+      padding-right:25%;
+    }
+    kbd {
+      color: #121212;
+    }
+    td {
+      max-width:600px;
+    }
+    img {
+      text-align: center;
+      width:100%;
+      object-fit: contain;
+      object-position: center;
+    }
+  </style>
+<title>CS 184 Mesh Editor</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
+<h1 align="middle">Project 4: Cloth Simulator</h1>
+<h2 align="middle">Justin Lee, Koa Lee</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+
+<h2 align="middle">Part I: Masses and springs</h2>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part1/1.png" align="middle"/>
+        <figcaption>Wireframe without shearing constraints</figcaption>
+      </td>
+      <td>
+        <img src="images/part1/2.png" align="middle"/>
+        <figcaption>Wireframe with only shearing constraints</figcaption>
+      </td>
+      <td>
+        <img src="images/part1/3.png" align="middle"/>
+        <figcaption>Wireframe with all constraints</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<h2 align="middle">Part II: Simulation via numerical integration</h2>
+
+<p>
+  The effects of changing different parameters were as follows:
+</p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <p>KS: A low value of ks made the cloth unstable, resulting in tiny ripples that never seemed to settle. On the other hand, extremely high values of ks made the cloth feel too smooth, moving without much detail. The default value of ks, 5000, seemed to strike a good balance between these two extremes.</p>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/part2/low_ks.png"/>
+        <figcaption>Low ks value</figcaption>
+      </td>
+      <td>
+        <img src="images/part2/def_ks.png"/>
+        <figcaption>Default ks value</figcaption>
+      </td>
+      <td>
+        <img src="images/part2/high_ks.png"/>
+        <figcaption>High ks value</figcaption>
+      </td>
+    </tr>
+    <br>
+  </table>
+  <br>
+  <table>
+    <tr align="center">
+      <p>Density: Changing the value of density had the reverse effect. For high values, the cloth became unstable and was not able to settle. For low values, the cloth behaved incredibly smoothly and seemed to lack any small ripples.</p>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/part2/low_d.png"/>
+        <figcaption>Low density value</figcaption>
+      </td>
+      <td>
+        <img src="images/part2/def_d.png"/>
+        <figcaption>Default density value</figcaption>
+      </td>
+      <td>
+        <img src="images/part2/high_d.png"/>
+        <figcaption>High density value</figcaption>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <table>
+    <tr align="center">
+      <p>Damping: Damping had no effect on the final resting state of the cloth, but rather changed how the cloth moved while falling. With very low damping values, the cloth took a very long time to settle, moving with very little resistance. With a very high damping value, the cloth moved incredibly slowly with very little disturbance and came to a stop almost instantly.</p>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/part2/low_damp.png"/>
+        <figcaption>Low dampening value</figcaption>
+      </td>
+      <td>
+        <img src="images/part2/def_damp.png"/>
+        <figcaption>Default dampening value</figcaption>
+      </td>
+      <td>
+        <img src="images/part2/high_damp.png"/>
+        <figcaption>High dampening value</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part2/rest.png" align="middle" width="600px"/>
+        <figcaption>Final resting state of scene/pinned4.json</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<h2 align="middle">Part III: Handling collisions with other objects</h2>
+
+<p>
+  When changing the ks value, low values made the cloth behave more "loosely", while high values made it behave more "stiffly". Where this is most visually apparent in images is the number of folds that result from the collision, as well as the radius of bends.
+</p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part3/low_ks.png" align="middle"/>
+        <figcaption>Sphere collision with low ks value</figcaption>
+      </td>
+      <td>
+        <img src="images/part3/def_ks.png" align="middle"/>
+        <figcaption>Sphere collision with default ks value</figcaption>
+      </td>
+      <td>
+        <img src="images/part3/high_ks.png" align="middle"/>
+        <figcaption>Sphere collision with high ks value</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part3/rest.png" align="middle" width="600px"/>
+        <figcaption>Cloth resting on the plane</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<h2 align="middle">Part IV: Handling self-collisions</h2>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part4/1.png" align="middle"/>
+        <figcaption>Early stage</figcaption>
+      </td>
+      <td>
+        <img src="images/part4/2.png" align="middle"/>
+        <figcaption>Middle stage</figcaption>
+      </td>
+      <td>
+        <img src="images/part4/3.png" align="middle"/>
+        <figcaption>Late stage</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<p>
+  Changes made to ks and density had similar effects as in part II. Low ks values resulted in more tiny and unstable ripples that took a while to settle down, while high ks values resulted in a smoother looking cloth. The opposite was true for density values.
+</p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part4/low_ks.png" align="middle"/>
+        <figcaption>Low ks value</figcaption>
+      </td>
+      <td>
+        <img src="images/part4/high_ks.png" align="middle"/>
+        <figcaption>High ks value</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/part4/low_d.png" align="middle"/>
+        <figcaption>Low density value</figcaption>
+      </td>
+      <td>
+        <img src="images/part4/high_d.png" align="middle"/>
+        <figcaption>High density value</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<h2 align="middle">Part V: Cloth sim</h2>
+
+<p>
+  A shader program is one which uses the combined work of both vertex and fragment shaders to intentionally modify how a program renders a given geometry. The vertex shader is responsible for manipulating the geometry itself, transforming vertices according to some specified equations or algorithms. The fragment shaders takes some given geometry and, rather than rendering the geometry how it is, can "filter" information to render a modified version of that geometry in apparent shape, color, texture, or more.
+</p>
+<br>
+<p>
+  The Blinn-Phong shading model computes three separate types of shading - ambient, diffuse, and specular - then combines them all. Ambient shading describes the light which is emminated naturally by the object, which is intended to fill in any shadows or areas not directly reflecting any light rays. Diffuse shading describes the light which an object reflects by diffusion, or in other words, the light that is scattered upon reflecting off the object. Specular shading describes the light which is directly reflected off the surface of the object.
+</p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part5/phong_a.png" align="middle"/>
+        <figcaption>Ambient shading</figcaption>
+      </td>
+      <td>
+        <img src="images/part5/phong_d.png" align="middle"/>
+        <figcaption>Diffuse shading</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/part5/phong_s.png" align="middle"/>
+        <figcaption>Specular shading</figcaption>
+      </td>
+      <td>
+        <img src="images/part5/phong.png" align="middle"/>
+        <figcaption>Full Blinn-Phong model</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part5/texture.png" align="middle" width="600px"/>
+        <figcaption>Example of texture-mapped cloth</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<p>
+  The differences between bump mapping and displacement mapping are quite noticeable. Because bump mapping only modifies how the light is rendered and not the physical geometry, simulations behave exactly like a normal cloth would. On the other hand, because displacement mapping modifies the actual geometry of the cloth, simulations can become quite messy when parts of the geometry start to overlap. While changing the mesh coarseness did change the appearance of the sphere, our simulation acted the same regardless.
+</p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part5/bump.png" align="middle"/>
+        <figcaption>Clothsim with bump mapping</figcaption>
+      </td>
+      <td>
+        <img src="images/part5/disp.png" align="middle"/>
+        <figcaption>Clothsim with displacement mapping</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/part5/mirror.png" align="middle" width="600px"/>
+        <figcaption>Example of mirror texturing</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+
+</body>
 </html>
