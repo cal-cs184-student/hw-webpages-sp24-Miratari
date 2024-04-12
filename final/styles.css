@@ -1,0 +1,30 @@
+html {
+    background-color:#ffffff;
+}
+
+body {
+    width: 70%;
+    padding: 100px;
+    margin: auto;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+    box-shadow: 0px 0px 10px black;
+}
+
+#titlecard {
+    text-align:center;
+    padding: 50px;
+}
+
+#bodytext {
+    text-align:left;
+    padding: 50px;
+    margin-left:10%;
+    margin-right:10%;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+    border-style:dashed;
+    border-color:red;
+}
