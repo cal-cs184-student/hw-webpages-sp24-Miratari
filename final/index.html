@@ -9,18 +9,39 @@
                 CS 184/284A: Computer Graphics and Imaging, Spring 2024
             </h2>
             <h1>
-                Reconstructing a Video Game Level from Images using Gaussian Splatting.
+                Constructing a Video Game Level from Images using Gaussian Splatting.
             </h1>
             <h3>
                 Justin Lee, Koa Lee, Antony Zhao, Stanley (Seung-Hyun) Kwon
             </h3>
         </div>
         <div id="bodytext">
-            Create a short webpage for your milestone report. This should be about 1 page long if printed. You should briefly summarize what you have accomplished, preliminary results, reflect on progress relative to your plan, and update your work plan as appropriate. You must submit this milestone deliverable (and the final deliverable) on a persistent website that you can choose to keep up after class if you wish to present this work in your portfolio.
-            <h2>Milestone Report</h2>
-            <h3>Accomplishments</h3>
-            <h3>Results</h3>
+            <h2>Milestone Report - 4/16/2024</h2>
+
+            We have successfully generated radiance fields based on test footage, imported those fields as gaussian splat models into Unity, and made a rudimentary game demo with mesh collision and a movable perspective that runs at an acceptable framerate. While our proof of concept works, we aim to increase the fidelity of these models with more training time and higher quality input scans.
+
+            <h3>Accomplishments / Results</h3>
+
+            Most of the difficulty in this stage came with importing our generated models into Unity. Our early attempts used Blender as a middleman to clean up the models to then import into Unity, however this resulted in models that failed to import correctly, or models with very messy untextured geometry. We fixed this by using a gaussian splat visualization tool on GitHub to import our models directly into Unity.<sup>1</sup> This gave us a much cleaner result. We also tested this same pipeline with public models included in the public repository associated with the paper "3D Gaussian Splatting for Real-Time Radiance Field Rendering" and were able to achieve even cleaner results.<sup>2</sup>
+            <br/>
+            <br/>
+            In terms of our game engine, our early movement code relied entirely on simple transforms of the player object. This was straightforward to implement, but led to issues with clipping through walls when a player should instead collide with it. We fixed this by re-writing our movement code to rely on Unity's physics engine, so that player movement was physically-based while camera controls still relied on rotations and tranformations. At this point, our collision meshes are entirely handmade as to make the levels as simple and reliable as possible.
+
             <h3>Future Plans</h3>
+
+            Our progress so far has been more or less in line with what we had planned,
+            <br/>
+            <br/>
+            Our future plans are still somewhat open-ended, but we would at least like to continue improving the quality of our generated models. We'd like to use the same pipeline with higher-quality scans and longer training times to hopefully generate models with less blurry textures, and with less random empty spaces. We would also like to streamline the process of adding collision to these models. Automating the creation of the collision mesh would be ideal, however doing so would require cleaning the data so random midair textures and splats don't become collision hitboxes themselves. Our current method results in splat models with thousands of small barely-visible splats that would turn into physical objects if run through a simple automated collision maker. Our current workaround has been to make the collision hitboxes by hand, but ideally we would like to experiement with different models to see if there is a better way of automating it.
+            <br/>
+            <br/>
+            Aspirationally, we're considering implementing more tools oriented towards game development, such as an AR viewer for our environment. We'd also like to experiment with more direct ways to render radiance fields, potentially with NeRFs, to gague whether our method provides a large enough speedup to warrant fully implementing; however, many sources have already proven the efficiency of gaussian splatting, so this may not be entirely necessary.
+            
+            <h3>Links:</h3>
+            <ol>
+                <li><a href="https://github.com/aras-p/UnityGaussianSplatting">https://github.com/aras-p/UnityGaussianSplatting</a></li>
+                <li><a href="https://github.com/graphdeco-inria/gaussian-splatting?tab=readme-ov-file"></a>https://github.com/graphdeco-inria/gaussian-splatting?tab=readme-ov-file</li>
+            </ol>
         </div>
     </body>
 </html>
