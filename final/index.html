@@ -16,7 +16,7 @@
 
             <h3>Preliminary Research</h3>
 
-            From what we have gathered, gaussian splatting is a much more efficient approach to real-time radiance field rendering than NeRFs. NeRFs rely on multi-layered networks to continuously compute the radiance and color density for every visible point in a scene, resulting in very computationally expensive rasterization. This process, while accurate, isn't very efficient on most GPUs. Gaussian splatting, on the other hand, represents radiance fields in a way that is much more compatible with traditional rendering methods of meshes and points. It represents each point as "gaussian splat", which is a blur of color with a given color, density, discrete position in 3D space, and order in which it should be rasterized. This strealined pipeline is much more efficient, and is what allows us to render them in real-time for use in video games.
+            From what we have gathered, gaussian splatting is a much more efficient approach to real-time radiance field rendering than NeRFs. NeRFs rely on multi-layered networks to continuously compute the radiance and color density for every visible point in a scene, resulting in very computationally expensive rasterization. This process, while accurate, isn't very efficient on most GPUs. Gaussian splatting, on the other hand, represents radiance fields in a way that is much more compatible with traditional rendering methods of meshes and points. It represents each point as "gaussian splat", which is a blur of color with a given color, density, discrete position in 3D space, and order in which it should be rasterized. This streamlined pipeline is much more efficient, and is what allows us to render them in real-time for use in video games.
 
             <h3>Accomplishments / Results</h3>
 
@@ -33,11 +33,11 @@
             Our future plans are still somewhat open-ended, but we would at least like to continue improving the quality of our generated models. We'd like to use the same pipeline with higher-quality scans and longer training times to hopefully generate models with less blurry textures, and with less random empty spaces. We would also like to streamline the process of adding collision to these models. Automating the creation of the collision mesh would be ideal, however doing so would require cleaning the data so random midair textures and splats don't become collision hitboxes themselves. Our current method results in splat models with thousands of small barely-visible splats that would turn into physical objects if run through a simple automated collision maker. Our current workaround has been to make the collision hitboxes by hand, but ideally we would like to experiement with different models to see if there is a better way of automating it.
             <br/>
             <br/>
-            Aspirationally, we're considering implementing more tools oriented towards game development, such as an AR viewer for our environment. We'd also like to experiment with more direct ways to render radiance fields, potentially with NeRFs, to gague whether our method provides a large enough speedup to warrant fully implementing; however, many sources have already proven the efficiency of gaussian splatting, so this may not be entirely necessary.
+            Aspirationally, we're considering implementing more tools oriented towards game development, such as an AR viewer for our environment. We'd also like to experiment with more direct ways to render radiance fields, potentially with NeRFs, to gauge whether our method provides a large enough speedup to warrant fully implementing; however, many sources have already proven the efficiency of gaussian splatting, so this may not be entirely necessary.
 
             <h3>Links:</h3>
 
-            <li>Video: <a href="https://drive.google.com/file/d/1PpimplQepg0W3Zh-IPNMlEjKNhYhTCYH/view?usp=sharing">https://drive.google.com/file/d/1PpimplQepg0W3Zh-IPNMlEjKNhYhTCYH/view?usp=sharing</a></li>
+            <li>Video: <a href="https://www.youtube.com/watch?v=AOk1PyS36v8">https://www.youtube.com/watch?v=AOk1PyS36v8</a></li>
             <li>Slides: <a href="https://docs.google.com/presentation/d/1qgCn4GOXmQ57vH7iSZXrYlFSpQSQNNtgvqEVcZKwxPw/edit?usp=sharing">https://docs.google.com/presentation/d/1qgCn4GOXmQ57vH7iSZXrYlFSpQSQNNtgvqEVcZKwxPw/edit?usp=sharing</a></li>
 
             <h3>References:</h3>
