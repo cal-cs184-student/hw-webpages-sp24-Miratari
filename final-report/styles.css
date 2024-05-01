@@ -43,11 +43,13 @@ body {
     display:flex;
     flex-direction:column;
     justify-content:center;
-    height:100vh;
+    min-height:100vh;
+    height:auto;
     padding-left:100px;
     padding-right:200px;
     width:100%;
     scroll-snap-align: center;
+    overflow-y:hidden;
 }
 .card .half {
     width:50%;
