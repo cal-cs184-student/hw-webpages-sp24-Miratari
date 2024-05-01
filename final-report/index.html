@@ -10,37 +10,98 @@
             <div id="sidebar">
                 <div class="navitem">Project</div>
                 <div class="navitem">Abstract</div>
-                <div class="navitem">Approach</div>
+                <div class="navitem">Stage 1</div>
+                <div class="navitem">Stage 2</div>
                 <div class="navitem">Results</div>
-                <div class="navitem">Comparison</div>
                 <div class="navitem">References</div>
             </div>
             <div id="content">
-                <div class="card" id="titlecard">
+
+                <div class="card" id="title">
                     <h3>Final Project - CS 184 SP24</h3>
                     <h1>Constructing a Video Game Level from Images using Gaussian Splatting</h1>
-                    <h2>Justin Lee, Antony Zhao, Stanley (Seung-Hyun) Kwon, Koa Lee</h2>
+                    <h2>Antony Zhao, Justin Lee, Koa Lee, Stanley (Seung-Hyun) Kwon</h2>
                 </div>
-                <div class="card" id="abstractcard">
+
+                <div class="card" id="abstract">
                     <h1>Novel view synthesis is hard, but useful.</h1>
-                    <h3>The process of converting real-world scenes, concept art, and drawings into 3D renders can be very difficult and time-consuming. While techniques for synthesizing novel scene views already exist in the form of Neural Radiance Fields (NeRFs), we were able to achieve significant speedups in real-time renders by utilizing Gaussian Splatting techniques. This was achieved through a pipeline of 
-                    </h3>
-                </div>
-                <div class="card" id="approachcard">
-                    <div>
-                        <h1>Research</h1>
-                        <p>akljdfbklwhjebfklwejbf</p>
+                    <div class="col">
+                        <p>The process of converting real-world scenes, concept art, and drawings into 3D renders can be very difficult and time-consuming. While techniques for synthesizing novel scene views from images and videos already exist in the form of Neural Radiance Fields (NeRFs), we were able to achieve significant speedups in real-time renders via Gaussian Splatting. This was achieved through a pipeline of multiple open-source tools that allowed us to import videos of indoor and ourdoor scenes, generate 3D point-cloud representations of those scenes, then render them in real-time in a video game engine such as Unity.</p>
+                        <img src="images/NeRF Pipeline.png" style="width:75%; border-style:solid;">
+                        <p>Source: <a href="https://arxiv.org/pdf/2003.08934.pdf">NeRF Paper (Mildenhall1, Srinivasan1, Tancik, et. al), 2020</a></p>
                     </div>
-                    <div>
-                        <h1>Techniques</h1>
-                        <p>;aslkdfjl;aksjnefkl</p>
+                    
+                </div>
+
+                <div class="card" id="stage1">
+                    <h1>Stage 1: Generating Point Clouds</h1>
+                    <div class="row">
+                        <p style="padding-right: 20px;">COLMAP is a Structure-from-Motion algorithm for 3D reconstruction. Given a sequence of images, it can estimate the camera positions and produce a point cloud representing the object/scene. Gaussian splatting then represents each of these points as a gaussian, with 16 parameters: position (XYZ), covariance (stretching/scaling of the gaussian), the color (RGB), and alpha (how transparent the gaussian is). These are then trained using gradient descent to match the input images, along with other clever techniques such as cloning or splitting Gaussians to more adequately represent the scene, and removing Gaussians with alpha values that are too low (i.e. too transparent).<br><br>
+
+                        When creating information to represent space, going through a function requires additional computational steps, whereas once you generate point clouds, you only need to render these clouds. This representation of the data is more akin to the traditional rasterization pipeline, allowing it to be much faster in rendering compared to NeRFs. This is where the bulk of the speedup occurs - data can be preprocessed to speed up real-time renders. The fact that Gaussians are actual “objects” in the scene also means we can interact with them more easily, such as the reflective balls in our examples.<br><br>
+
+                        You can also edit the Gaussians directly, such as removing some of them or even overlaying multiple Gaussian scenes on top of each other (although it appears that Unity struggles with this a bit). Another thing it allows you to do is add more objects to the scene, which would more complicated to do with NeRFs, as it doesn’t provide any depth information about the pixels you obtain from raycasting.<br><br>
+                        
+                        NeRFs on the other hand create a neural network which represents the scene. To obtain images from this neural network we need to query it by raycasting for every pixel, which can be incredibly slow. <b>This can make it much slower, taking a few seconds to render a new image, which makes it a bad candidate for video game design where users would like to be able to view scenes nearly in real time. Gaussian splatting, in this case, is comparatively faster.</b>
+                        </p>
+                        <div class="col">
+                            <div class="row">
+                                <p class="caption" style="padding-right: 10px;"><img src="images/Campanile Point Cloud.png" style="height:200px; border-style:solid;">A point cloud generated from a video of the campanile.</p>
+                                <br>
+                                <p class="caption"><img src="images/Bicycle Gaussians.png" style="height:200px; border-style:solid;">A point cloud of a bicycle represented as thousands of gaussian splats.</p>
+                            </div>
+                            <p class="caption"><img src="images/Unity Balls.png" style="width:100%; border-style:solid;">Spheres reflecting the surrounding gaussian splat environment.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="card" id="resultscard">
+
+                <div class="card" id="stage2">
+                    <h1>Stage 2: Importing into Unity</h1>
+                    <div class="row">
+                        <p style="padding-right: 20px;">Gaussian Splat Models come in a format called PLY which is used to describe polygons in space. These files store information for each gaussian, such as position, rotation, scale, and 3rd-order spherical harmonics information used to change the gaussian's color depending on the viewing angle. However, these files also store additional information such as opacity, and thus aren't directly compatible with Unity. Our early attempts used Blender as a middleman to clean up the models to then import into Unity, however this resulted in models that failed to import correctly, or models with very messy untextured geometry. We then utilized an open-source tool to successfully import these PLY files and properly convert the information into a format interpretable by Unity. This tool also allows for compression by merging multiple points into user-defined "chunks" and averaging the values of all the points contained, as well as maintaining ranges of those values. Instead of having individual values for every single splat, average values can be used in compressed texture formats to considerably lower the size of each model.<br><br>
+
+                        In terms of our game engine, our early movement code relied entirely on utilizing transforms on the player object in order to translate and rotate the player’s position forward. This was straightforward to implement, but led to issues with clipping through walls when a player should instead collide with it. We fixed this by rewriting our movement code to rely on Unity's physics engine, so that players would move by sending a slight force in a direction. Our camera code still relies on transformations and rotations through two attributes called cameraPosition and orientationObject to track the player's current position and perspective, respectively. For collider meshes, we have manually implemented invisible collision objects (we are unable to generate automatic mesh colliders for these objects due to the nature of how gaussian splats tend to generate in midair). A problem that we ran into when implementing the camera functionalities was that the camera would consistently follow ahead of the player, allowing the player to look through walls before being stopped by it. We fixed this by making the invisible walls closer to the player so that the players would be stopped before they can look through the walls. The camera would also randomly choose a direction it would want to face (still have not learned the reason for this but had to reposition the entire level around the wonkiness of the camera).
+                        </p>
+                        <div class="col">
+                            <div class="row">
+                                <img src="images/messy1.png" style="height:150px; border-style:solid; padding-right:5px;">
+                                <img src="images/messy2.png" style="height:150px; border-style:solid;">
+                            </div>
+                            <p class="caption">Result of directly importing PLY files to Unity</p>
+                            <p class="caption"><img src="images/otomatone imported.png" style="width:100%; border-style:solid;">Correct import</p>
+                        </div>
+                    </div>
+                    <p>Connecting multiple Splats seems to not work, forcing our idea of connecting multiple splats to create levels to be rendered obsolete. This is due to how the render that is currently being looked at becomes the priority, causing every other render to become invisible. Workaround has been trimming the splats until they don’t overlap but this is very difficult as the splats are very wide and need a lot of protruding splats to look right. <b>Overall, while this process can certainly aid in the generation of photorealistic video game levels, given how much manual work needs to be done after importing to make a playable scene, we unfortunately don't think it's a very optimal approach yet.</b></p>
+                </div>
+
+                <div class="card" id="results">
                     <h1>Results</h1>
+                    <div class="col">
+                        <div class="row">
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/hOiwDwZ7jbc?si=vbJ_S4x4sYpymeN7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="padding-right: 10px;"></iframe>
+
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/FmDptyXkVSM?si=mdjxXwbDNh8Zoebl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                        <p class="caption">Example of our own rendered gaussian splat scene, as well as a NeRF generated for comparison. The low quality in the NeRF video is present on-device, and is due to low render quality and not video compression.</p>
+                        <br>
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/rV2dDKF99E0?si=racf3SPx5yLB0efN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <p class="caption">Demonstration of our playable Unity game, showcasing many aspects of gaussian splats mentioned in this writeup.</p>
+                    </div>
                 </div>
-                <div class="card" id="referencescard">
+
+                <div class="card" id="references">
                     <h1>References</h1>
+                    <ul>
+                        <li>Tool for importing gaussian splats into Unity: <a href="https://github.com/aras-p/UnityGaussianSplatting">https://github.com/aras-p/UnityGaussianSplatting</a></li>
+                        <li>Original reference repo for gaussian splatting: <a href="https://github.com/graphdeco-inria/gaussian-splatting">https://github.com/graphdeco-inria/gaussian-splatting</a></li>
+                    </ul>
+                    <h1>Contributions</h1>
+                    <ul>
+                        <li>Antony Zhao: COLMAP, Gaussian splats - Filmed test footage, converted videos to point cloud files.</li>
+                        <li>Justin Lee: Game engine and Unity development - importing files into Unity editor, building game enviroments, and implementing player physics engine.</li>
+                        <li>Koa Lee: Writeup and documentation - Researched open-source tools and installation processes, and recorded and compiled data and information in writeups.</li>
+                        <li>Stanley (Seung-Hyun) Kwon: NeRF and gaussian splat research - Researched underlying workings of NeRFs and gaussian splats to properly describe and compare real-time efficiency.</li>
+                    </ul>
                 </div>
             </div>
         </div>
