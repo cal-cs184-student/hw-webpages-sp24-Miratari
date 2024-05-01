@@ -13,7 +13,7 @@ body {
     flex-direction:column;
     position:fixed;
     height:100%;
-    width:120px;
+    width:130px;
     background-color:#f1f1f1;
     justify-content: center;
     border-right: 1px solid #dadada;
@@ -32,7 +32,7 @@ body {
     overflow:scroll;
     overflow-x:hidden;
     background-color:white;
-    padding-left:120px;
+    padding-left:130px;
     padding-right:200px;
     width:100%;
     scroll-snap-type: y mandatory;

@@ -13,6 +13,7 @@
                 <div class="navitem">Stage 1</div>
                 <div class="navitem">Stage 2</div>
                 <div class="navitem">Results</div>
+                <div class="navitem">Conclusions</div>
                 <div class="navitem">References</div>
             </div>
             <div id="content">
@@ -86,6 +87,36 @@
                         <br>
                         <iframe width="560" height="315" src="https://www.youtube.com/embed/rV2dDKF99E0?si=racf3SPx5yLB0efN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                         <p class="caption">Demonstration of our playable Unity game, showcasing many aspects of gaussian splats mentioned in this writeup.</p>
+                    </div>
+                </div>
+
+                <div class="card" id="conclusions">
+                    <h1>Conclusions</h1>
+                    <div class="col">
+                        <p>Videos typically capture well when lighting stays consistent, objects don't move, and very little motion blur is present. Some examples of good footage that worked for us were recordings of video games, or videos filmed with slow camera movement during a sunny day. Any disturbances in video footage, like atmospheric light effects or lens flares will mess up the capture.</p>
+                        
+                        <div class="col">
+                            <div class="row">
+                                <img src="images/sunlight.png" style="height:200px;">
+                                <img src="images/nepal.png" style="height:200px;">
+                            </div>
+                            <p class="caption">Comparison of ideal/not ideal environments. On the left is a gaussian splat capturing direct sunlight, and the right is a gaussian splat of the map "Nepal" from Overwatch.</p>
+                        </div>
+
+                        <p>Additionally, gaussian splats typically look best when viewed from an angle similar to what was already captured on camera, so that less information is being interpolated or generated from other parts of the scene. This can be most easily overcome by capturing many unique angles and details of a scene, which tends to be easiest in smaller rooms instead of outdoors.</p>
+
+                        <div class="col">
+                            <div class="row">
+                                <img src="images/otamatone good.png" style="height:200px;">
+                                <img src="images/otamatone bad.png" style="height:200px; padding-right: 20px;">
+                                <img src="images/campanile oski.png" style="height:200px;">
+                                <img src="images/camapnile steps.png" style="height:200px;">
+                            </div>
+                            <p class="caption">Comparing angles of scenes that were directly captured on camera and angles that are being interpolated by gaussian splatting.</p>
+                        </div>
+
+                        <p>However, even with an ideal capture, it's still difficult to generate collision geometry from gaussian splats alone. A lot of manual work is needed to remove any floating splats from a scene, and any areas not properly captured in video will have very messy geometry. Despite the rendering efficiencies, more work is needed to streamline the process of using gaussian splatting to generate video game levels.
+                        </p>
                     </div>
                 </div>
 
