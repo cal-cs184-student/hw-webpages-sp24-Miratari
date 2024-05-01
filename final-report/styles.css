@@ -1,0 +1,85 @@
+body {
+    margin:0px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#pagecontainer {
+    display:flex;
+    height:100vh;
+}
+
+#sidebar {
+    display:flex;
+    flex-direction:column;
+    position:fixed;
+    height:100%;
+    width:120px;
+    background-color:#f1f1f1;
+    justify-content: center;
+    border-right: 1px solid #dadada;
+}
+
+.navitem {
+    margin:10px;
+    padding:10px;
+    border-radius: 5px;
+    text-align: center;
+    background-color:#f1f1f1;
+    transition-duration:0.25s;
+}
+
+#content {
+    overflow:scroll;
+    overflow-x:hidden;
+    background-color:white;
+    padding-left:120px;
+    padding-right:200px;
+    width:100%;
+    scroll-snap-type: y mandatory;
+    scroll-snap-align: start;
+}
+
+.card {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    height:100vh;
+    padding-left:100px;
+    padding-right:200px;
+    width:100%;
+    scroll-snap-align: center;
+}
+
+#titlecard {
+    background-color:rgb(44, 85, 110);
+    color:white;
+}
+
+#abstractcard {
+    background-color:rgb(255, 255, 255);
+}
+
+#approachcard {
+    display:flex;
+    flex-direction:row;
+    background-color:rgb(213, 213, 213);
+}
+#approachcard div {
+    width:50%;
+}
+
+h1 {
+    font-size:70px;
+}
+
+h2 {
+    font-size:40px;
+}
+
+h3 {
+    font-size:20px;
+}
+
+h4 {
+    font-size:10px;
+}
